@@ -359,7 +359,7 @@ void WorldSession::HandleMoveTeleportAckOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
 {
-    Opcodes opcode = recv_data.GetOpcode();
+    LogicalOpcodes opcode = recv_data.GetOpcode();
     if (!sLog.HasLogFilter(LOG_FILTER_PLAYER_MOVES))
     {
         DEBUG_LOG("WORLD: Received opcode %s (%u, 0x%X)", LookupOpcodeName(opcode), opcode, opcode);
@@ -614,7 +614,7 @@ void WorldSession::HandleMoveFlagChangeOpcode(WorldPacket& recv_data)
     if (!ProcessMovementInfo(movementInfo, mover, _player, recv_data))
         return;
 
-    Opcodes response = MSG_NULL_ACTION;
+    LogicalOpcodes response = MSG_NULL_ACTION;
 
     switch (recv_data.GetOpcode())
     {

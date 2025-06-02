@@ -32,6 +32,11 @@ set(SRC_GRP_AUTH
     Auth/base32.h
 )
 
+set(SRC_GRP_BUILD
+    build/BuildInfo.cpp
+    build/BuildInfo.h
+)
+
 set(SRC_GRP_CONFIG
     Config/Config.cpp
     Config/Config.h
@@ -139,6 +144,7 @@ set(SRC_GRP_UTIL
 
 set(LIBRARY_SRCS
     ${SRC_GRP_AUTH}
+	${SRC_GRP_BUILD}
     ${SRC_GRP_CONFIG}
     ${SRC_GRP_DATABASE}
     ${SRC_GRP_DATABASE_DBC}
@@ -162,6 +168,11 @@ set(PCH_FILE_SOURCE "pchdef.cpp")
 source_group("Auth"
   FILES
     ${SRC_GRP_AUTH}
+)
+
+source_group("Build"
+  FILES
+    ${SRC_GRP_BUILD}
 )
 
 source_group("Config"
