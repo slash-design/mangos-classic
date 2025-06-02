@@ -404,7 +404,7 @@ enum UnitState
 
 #define BASE_CHARGE_SPEED 27.0f
 
-typedef const Opcodes SpeedOpcodePair[3];
+typedef const LogicalOpcodes SpeedOpcodePair[3];
 SpeedOpcodePair SetSpeed2Opc_table[MAX_MOVE_TYPE] =
 {
     {SMSG_FORCE_WALK_SPEED_CHANGE,        SMSG_SPLINE_SET_WALK_SPEED,           MSG_MOVE_SET_WALK_SPEED},
