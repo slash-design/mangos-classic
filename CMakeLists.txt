@@ -19,6 +19,10 @@
 cmake_minimum_required(VERSION 3.9)
 cmake_policy(SET CMP0069 NEW)
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 # Will cache object files if ccache is available
 # Must be set at top of cmake outside of project header
 find_program(CCACHE_PROGRAM ccache)
@@ -103,6 +107,7 @@ if(WIN32 AND NOT MSVC AND NOT MINGW)
 endif()
 
 include(CheckPlatform)
+include(cmake/build_version.cmake)
 
 # TODO: use MSVC_CXX_ARCHITECTURE_ID instead to identify platform on windows (not required on other systems)
 # find platform: required to build 3rd party libraries w/o CMake files
@@ -442,3 +447,23 @@ endif()
 # if(SQL)
 #   add_subdirectory(sql)
 # endif()
+
+# ============================
+# Apply build version macros
+# ============================
+# Add BUILD_VERSION_* and BUILD_NUMBERS macros to all targets
+# Ensure this is after all add_subdirectory() calls
+
+# List all known target names that need the definitions
+set(CMANGOS_ALL_TARGETS
+    shared
+    realmd
+    mangosd
+)
+
+foreach(target IN LISTS CMANGOS_ALL_TARGETS)
+    if(TARGET ${target})
+        target_compile_definitions(${target} PUBLIC ${GLOBAL_BUILD_VERSION_MACRO})
+        target_compile_definitions(${target} PUBLIC BUILD_NUMBERS="${GLOBAL_BUILD_NUMBERS}")
+    endif()
+endforeach()

@@ -33,24 +33,24 @@ class WorldPacket : public ByteBuffer
         WorldPacket() : ByteBuffer(0), m_opcode(MSG_NULL_ACTION)
         {
         }
-        explicit WorldPacket(Opcodes opcode, size_t reservedSize = 200) : ByteBuffer(reservedSize), m_opcode(opcode) {}
+        explicit WorldPacket(LogicalOpcodes opcode, size_t reservedSize = 200) : ByteBuffer(reservedSize), m_opcode(opcode) {}
 
-        void Initialize(Opcodes opcode, size_t reservedSize = 200)
+        void Initialize(LogicalOpcodes opcode, size_t reservedSize = 200)
         {
             clear();
             reserve(reservedSize);
             m_opcode = opcode;
         }
 
-        Opcodes GetOpcode() const { return m_opcode; }
-        void SetOpcode(Opcodes opcode) { m_opcode = opcode; }
+        LogicalOpcodes GetOpcode() const { return m_opcode; }
+        void SetOpcode(LogicalOpcodes opcode) { m_opcode = opcode; }
         inline const char* GetOpcodeName() const { return LookupOpcodeName(m_opcode); }
 
         std::chrono::steady_clock::time_point GetReceivedTime() const { return m_receivedTime; }
         void SetReceivedTime(std::chrono::steady_clock::time_point receivedTime) { m_receivedTime = receivedTime; }
 
     private:
-        Opcodes m_opcode;
+        LogicalOpcodes m_opcode;
         std::chrono::steady_clock::time_point m_receivedTime; // only set for a specific set of opcodes, for performance reasons.
 };
 #endif

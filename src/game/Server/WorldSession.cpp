@@ -75,7 +75,7 @@ static bool MapSessionFilterHelper(WorldSession* session, OpcodeHandler const& o
 
 bool MapSessionFilter::Process(WorldPacket const& packet) const
 {
-    OpcodeHandler const& opHandle = opcodeTable[packet.GetOpcode()];
+    OpcodeHandler const& opHandle = logicalOpcodeTable[packet.GetOpcode()];
     if (opHandle.packetProcessing == PROCESS_INPLACE)
         return true;
 
@@ -87,7 +87,7 @@ bool MapSessionFilter::Process(WorldPacket const& packet) const
 // OR packet handler is not thread-safe!
 bool WorldSessionFilter::Process(WorldPacket const& packet) const
 {
-    OpcodeHandler const& opHandle = opcodeTable[packet.GetOpcode()];
+    OpcodeHandler const& opHandle = logicalOpcodeTable[packet.GetOpcode()];
     // check if packet handler is supposed to be safe
     if (opHandle.packetProcessing == PROCESS_INPLACE)
         return true;
@@ -256,7 +256,7 @@ void WorldSession::SendPacket(WorldPacket const& packet, bool forcedSend /*= fal
 void WorldSession::QueuePacket(std::unique_ptr<WorldPacket> new_packet)
 {
     sWorld.IncrementOpcodeCounter(new_packet->GetOpcode());
-    OpcodeHandler const& opHandle = opcodeTable[new_packet->GetOpcode()];
+    OpcodeHandler const& opHandle = logicalOpcodeTable[new_packet->GetOpcode()];
     if (opHandle.packetProcessing == PROCESS_IMMEDIATE)
     {
         try
@@ -373,7 +373,7 @@ bool WorldSession::Update(uint32 diff)
         auto const packet = std::move(recvQueueCopy.front());
         recvQueueCopy.pop_front();
 
-        OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
+        OpcodeHandler const& opHandle = logicalOpcodeTable[packet->GetOpcode()];
         switch (opHandle.status)
         {
             case STATUS_LOGGEDIN:
@@ -572,7 +572,7 @@ void WorldSession::UpdateMap(uint32 diff)
         auto const packet = std::move(recvQueueMapCopy.front());
         recvQueueMapCopy.pop_front();
 
-        OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
+        OpcodeHandler const& opHandle = logicalOpcodeTable[packet->GetOpcode()];
         
         if (opHandle.status == STATUS_LOGGEDIN)
         {
@@ -591,7 +591,7 @@ void WorldSession::HandleBotPackets()
 
         auto const packet = std::move(m_recvQueue.front());
         m_recvQueue.pop_front();
-        OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
+        OpcodeHandler const& opHandle = logicalOpcodeTable[packet->GetOpcode()];
         (this->*opHandle.handler)(*packet);
 
         if (_player)

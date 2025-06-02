@@ -115,7 +115,7 @@ std::list<uint32> World::m_histDiff;
 #endif
 
 /// World constructor
-World::World(): mail_timer(0), mail_timer_expires(0), m_NextWeeklyQuestReset(0), m_opcodeCounters(NUM_MSG_TYPES)
+World::World(): mail_timer(0), mail_timer_expires(0), m_NextWeeklyQuestReset(0), m_opcodeCounters(NUM_LOGICAL_OPCODES)
 {
     m_playerLimit = 0;
     m_allowMovement = true;
