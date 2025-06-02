@@ -19,7 +19,7 @@
 #define _OPCODES_H
 
 #include "Common.h"
-#include "build/BuildInfo.h"
+#include "BuildVersion/BuildInfo.h"
 #include "Server/WorldSession.h"
 #include "Policies/Singleton.h"
 #include <unordered_map>

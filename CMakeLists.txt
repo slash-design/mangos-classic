@@ -33,7 +33,7 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-project(DestinyCore)
+project(CMaNGOS_Classic)
 
 # Require C++ 17 support
 set(CMAKE_CXX_STANDARD 17)
