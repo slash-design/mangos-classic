@@ -32,9 +32,9 @@ set(SRC_GRP_AUTH
     Auth/base32.h
 )
 
-set(SRC_GRP_BUILD
-    build/BuildInfo.cpp
-    build/BuildInfo.h
+set(SRC_GRP_BUILDVERSION
+    BuildVersion/BuildInfo.cpp
+    BuildVersion/BuildInfo.h
 )
 
 set(SRC_GRP_CONFIG
@@ -144,7 +144,7 @@ set(SRC_GRP_UTIL
 
 set(LIBRARY_SRCS
     ${SRC_GRP_AUTH}
-	${SRC_GRP_BUILD}
+	${SRC_GRP_BUILDVERSION}
     ${SRC_GRP_CONFIG}
     ${SRC_GRP_DATABASE}
     ${SRC_GRP_DATABASE_DBC}
@@ -170,9 +170,9 @@ source_group("Auth"
     ${SRC_GRP_AUTH}
 )
 
-source_group("Build"
+source_group("BuildVersion"
   FILES
-    ${SRC_GRP_BUILD}
+    ${SRC_GRP_BUILDVERSION}
 )
 
 source_group("Config"
