@@ -211,27 +211,32 @@ if (POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
-# Set minimal Boost version
 set(BOOST_MIN_VERSION "1.78")
 
-# Find Boost with explicit version
-find_package(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS system program_options thread regex serialization filesystem)
-
-if(NOT Boost_FOUND AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER))
-  message(STATUS "BOOST_ROOT = $ENV{BOOST_ROOT}")
-  message(STATUS "BOOST_LIBRARYDIR = $ENV{BOOST_LIBRARYDIR}")
-  if ("$ENV{BOOST_ROOT}" STREQUAL "")
-    message(WARNING "BOOST_ROOT is not set, please set it correctly to your boost folder.")
-  else()
-    if ("$ENV{BOOST_LIBRARYDIR}" STREQUAL "")
-      message(STATUS "Please put all ${DEP_ARCH} boost lib files in $ENV{BOOST_ROOT}\\lib\\${DEP_ARCH} folder")
-      message(STATUS "Or set BOOST_LIBRARYDIR to your boost lib folder.")
-    else()
-      message(STATUS "BOOST_LIBRARYDIR is set, please verify if correct libs files are in that folder.")
-    endif()
-  endif()
-  message(FATAL_ERROR "This project requires boost. Please install from http://www.boost.org")
+# Allow external paths to help find Boost in CI environments
+if(DEFINED ENV{BOOST_ROOT})
+  set(BOOST_ROOT "$ENV{BOOST_ROOT}")
 endif()
+
+# Optional: set BOOST_LIBRARYDIR explicitly (can help linker)
+if(DEFINED ENV{BOOST_LIBRARYDIR})
+  set(BOOST_LIBRARYDIR "$ENV{BOOST_LIBRARYDIR}")
+endif()
+
+# Boost config
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_NO_BOOST_CMAKE ON)
+add_definitions(-DBOOST_ALL_NO_LIB)
+
+# Actually find Boost
+find_package(Boost ${BOOST_MIN_VERSION} REQUIRED
+  COMPONENTS system program_options thread regex serialization filesystem
+  HINTS "${BOOST_ROOT}" "$ENV{BOOST_ROOT}"
+)
+
+# Optional debug
+# message(STATUS "Boost include: ${Boost_INCLUDE_DIRS}")
+# message(STATUS "Boost libs: ${Boost_LIBRARY_DIRS}")
 
 # Win32 delivered packages
 if(WIN32 AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS))

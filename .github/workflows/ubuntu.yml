@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: Release
   REPO_DIR: ${{ github.workspace }}
   BUILD_DIR: ${{ github.workspace }}/bin/builddir
-  BOOST_VERSION: "1.80.0"
+  BOOST_VERSION: "1.78.0"
   BOOST_PLATFORM_VERSION: "22.04"
 
 jobs:
@@ -50,13 +50,12 @@ jobs:
           echo "CXX=${{ matrix.COMPILER_PP }}" >> $GITHUB_ENV
           cmake -E make_directory ${{ env.BUILD_DIR }}
 
-      - name: Install Boost
+      - name: Install Boost 1.78.0
         uses: MarkusJx/install-boost@v2.5.0
         id: install-boost
         with:
           boost_version: ${{ env.BOOST_VERSION }}
           platform_version: ${{ env.BOOST_PLATFORM_VERSION }}
-          toolset: ${{ matrix.COMPILER_CC }}
           arch: x86
 
       - name: Verify Boost Installation
@@ -78,7 +77,6 @@ jobs:
           -DCMAKE_INSTALL_PREFIX=/home/runner/work
           -DPCH=${{ env.USE_PCH }}
           -DBoost_NO_BOOST_CMAKE=ON
-          -DBoost_NO_SYSTEM_PATHS=ON
           -DBOOST_ROOT=${{ env.BOOST_ROOT }}
           -DBOOST_INCLUDEDIR=${{ env.BOOST_INCLUDEDIR }}
           -DBOOST_LIBRARYDIR=${{ env.BOOST_LIBRARYDIR }}
