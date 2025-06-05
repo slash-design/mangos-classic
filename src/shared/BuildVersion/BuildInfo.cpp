@@ -16,6 +16,7 @@
  */
 
 #include "BuildInfo.h"
+#include <algorithm>
 
 namespace BuildInfo {
 
