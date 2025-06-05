@@ -192,10 +192,12 @@ set(CMAKE_INSTALL_NAME_DIR ${LIBS_DIR})
 
 # Add alternate lib dir for boost on windows
 if(WIN32 AND NOT "$ENV{BOOST_ROOT}" STREQUAL "")
-  set(BOOST_LIBRARYDIR "$ENV{BOOST_LIBRARYDIR}")
-  set(BOOST_LIBRARYDIR "${BOOST_LIBRARYDIR};$ENV{BOOST_ROOT}\\lib\\${DEP_ARCH}")
-  set(BOOST_LIBRARYDIR "${BOOST_LIBRARYDIR};$ENV{BOOST_ROOT}\\stage\\${DEP_ARCH}")
-  set(BOOST_LIBRARYDIR "${BOOST_LIBRARYDIR};$ENV{BOOST_ROOT}\\stage")
+  list(APPEND BOOST_LIBRARYDIR
+    "$ENV{BOOST_LIBRARYDIR}"
+    "$ENV{BOOST_ROOT}/lib/${DEP_ARCH}"
+    "$ENV{BOOST_ROOT}/stage/${DEP_ARCH}"
+    "$ENV{BOOST_ROOT}/stage"
+  )
 endif()
 
 # Be sure to search only static lib
@@ -204,38 +206,37 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_NO_BOOST_CMAKE ON)   # should fix build for boost 1.71
 #set(Boost_DEBUG ON)
 
-if(MSVC)
-  # Use at least verion 3.8.1 of FindBoost to fix some issues. Especialy in MSVC with fixed Toolset issues.
-  # This is a workaround while VisualStudio does not embed higher cmake version than 3.7.2
-  if(${CMAKE_VERSION} VERSION_LESS "3.11.3")
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros/FindBoost")
-    message(STATUS "FindBoost: included version 3.11.3 of FindBoost is used.")
-  endif()
-endif()
-
-# In our case use new way to treat BOOST_ROOT environement variable
+# Use new way to treat BOOST_ROOT environment variable (CMP0074)
 if (POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
-# Find needed packages and if necessery abort if something important is missing
-find_package(Boost REQUIRED COMPONENTS system program_options thread regex serialization filesystem)
+set(BOOST_MIN_VERSION "1.78")
 
-if(NOT Boost_FOUND AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER))
-  message(STATUS "BOOST_ROOT = $ENV{BOOST_ROOT}")
-  message(STATUS "BOOST_LIBRARYDIR = $ENV{BOOST_LIBRARYDIR}")
-  if ("$ENV{BOOST_ROOT}" STREQUAL "")
-    message(WARNING "BOOST_ROOT is not set, please set it correctly to your boost folder.")
-  else()
-    if ("$ENV{BOOST_LIBRARYDIR}" STREQUAL "")
-        message(STATUS "Please put all ${DEP_ARCH} boost lib files in $ENV{BOOST_ROOT}\\lib\\${DEP_ARCH} folder")
-        message(STATUS "Or set BOOST_LIBRARYDIR to your boost lib folder.")
-    else()
-        message(STATUS "BOOST_LIBRARYDIR is set, please verify if correct libs files are in that folder.")
-    endif()
-  endif()
-  message(FATAL_ERROR "This project requires boost.  Please install from http://www.boost.org")
+# Allow external paths to help find Boost in CI environments
+if(DEFINED ENV{BOOST_ROOT})
+  set(BOOST_ROOT "$ENV{BOOST_ROOT}")
 endif()
+
+# Optional: set BOOST_LIBRARYDIR explicitly (can help linker)
+if(DEFINED ENV{BOOST_LIBRARYDIR})
+  set(BOOST_LIBRARYDIR "$ENV{BOOST_LIBRARYDIR}")
+endif()
+
+# Boost config
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_NO_BOOST_CMAKE ON)
+add_definitions(-DBOOST_ALL_NO_LIB)
+
+# Actually find Boost
+find_package(Boost ${BOOST_MIN_VERSION} REQUIRED
+  COMPONENTS system program_options thread regex serialization filesystem
+  HINTS "${BOOST_ROOT}" "$ENV{BOOST_ROOT}"
+)
+
+# Optional debug
+# message(STATUS "Boost include: ${Boost_INCLUDE_DIRS}")
+# message(STATUS "Boost libs: ${Boost_LIBRARY_DIRS}")
 
 # Win32 delivered packages
 if(WIN32 AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS))
