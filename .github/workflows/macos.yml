@@ -7,7 +7,7 @@ env:
   REPO_DIR: ${{ github.workspace }}
   BUILD_DIR: ${{ github.workspace }}/bin/builddir
   BOOST_VERSION: "1.74.0"
-  BOOST_PLATFORM_VERSION: "13"  # macOS 13 runner
+  BOOST_PLATFORM_VERSION: "13"
   BOOST_ARCH: x86
 
 jobs:
@@ -20,20 +20,17 @@ jobs:
         with:
           path: ${{ env.REPO_DIR }}
 
+      - name: Install Dependencies
+        run: |
+          brew update
+          brew install mysql openssl
+          brew link --force openssl
+
       - name: Setup Build Environment
         run: |
           echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
           cmake -E make_directory ${{ env.BUILD_DIR }}
-
-      - name: Install Dependencies
-        run: |
-          brew update
-          brew install mysql-client
-          echo "MYSQL_ROOT=/usr/local/opt/mysql-client" >> $GITHUB_ENV
-          echo "LDFLAGS=-L/usr/local/opt/mysql-client/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I/usr/local/opt/mysql-client/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/usr/local/opt/mysql-client/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Install Boost
         uses: MarkusJx/install-boost@v2.5.0
@@ -44,32 +41,22 @@ jobs:
           toolset: clang
           arch: ${{ env.BOOST_ARCH }}
 
-      - name: Verify Boost Installation
-        run: |
-          echo "Boost Root: ${{ steps.install-boost.outputs.BOOST_ROOT }}"
-          ls -l ${{ steps.install-boost.outputs.BOOST_ROOT }}/include/boost
-          ls -l ${{ steps.install-boost.outputs.BOOST_ROOT }}/lib
-
       - name: Configure with CMake
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
           BOOST_INCLUDEDIR: ${{ steps.install-boost.outputs.BOOST_ROOT }}/include
           BOOST_LIBRARYDIR: ${{ steps.install-boost.outputs.BOOST_ROOT }}/lib
-          LDFLAGS: ${{ env.LDFLAGS }}
-          CPPFLAGS: ${{ env.CPPFLAGS }}
-          PKG_CONFIG_PATH: ${{ env.PKG_CONFIG_PATH }}
         run: |
-          export LDFLAGS="${LDFLAGS}"
-          export CPPFLAGS="${CPPFLAGS}"
-          export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
           cmake \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
             -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
             -DBoost_NO_BOOST_CMAKE=ON \
             -DBoost_NO_SYSTEM_PATHS=ON \
-            -DBOOST_ROOT=${{ env.BOOST_ROOT }} \
-            -DBOOST_INCLUDEDIR=${{ env.BOOST_INCLUDEDIR }} \
-            -DBOOST_LIBRARYDIR=${{ env.BOOST_LIBRARYDIR }} \
+            -DBOOST_ROOT=$BOOST_ROOT \
+            -DBOOST_INCLUDEDIR=$BOOST_INCLUDEDIR \
+            -DBOOST_LIBRARYDIR=$BOOST_LIBRARYDIR \
+            -DMYSQL_INCLUDE_DIR=$(brew --prefix mysql)/include \
+            -DMYSQL_LIBRARY=$(brew --prefix mysql)/lib/libmysqlclient.dylib \
             -B ${{ env.BUILD_DIR }} \
             -S ${{ env.REPO_DIR }}
 
