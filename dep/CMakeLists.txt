@@ -77,6 +77,7 @@ endif()
 
 if (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS)
   add_subdirectory(g3dlite)
+  add_subdirectory(boost)
 endif()
 
 set(SET_DEPENDENCY_PROP FALSE)
