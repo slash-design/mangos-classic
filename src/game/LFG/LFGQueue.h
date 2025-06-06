@@ -24,6 +24,7 @@
 #include "Entities/ObjectGuid.h"
 #include "Globals/SharedDefines.h"
 #include "Multithreading/Messager.h"
+#include "Entities/Object.h"
 
 class Player;
 
