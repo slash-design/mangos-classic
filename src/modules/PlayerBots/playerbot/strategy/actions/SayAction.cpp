@@ -271,7 +271,7 @@ void ChatReplyAction::GetAIChatPlaceholders(std::map<std::string, std::string>& 
     }
 }
 
-WorldPacket ChatReplyAction::GetPacketTemplate(Opcodes op, uint32 type, Unit* sender, Unit* target, std::string channelName)
+WorldPacket ChatReplyAction::GetPacketTemplate(LogicalOpcodes op, uint32 type, Unit* sender, Unit* target, std::string channelName)
 {
     Player* senderPlayer = (sender->IsPlayer()) ? (Player*)sender : nullptr;
     ObjectGuid senderGuid = sender->GetObjectGuid();

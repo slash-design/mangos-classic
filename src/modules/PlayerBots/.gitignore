@@ -11,6 +11,7 @@
 !.gitignore
 !.gitattributes
 !.travis.yml
+!src/modules/playerbots/**
 
 # JetBrains - project settings
 /.idea/

@@ -24,7 +24,7 @@
 #include "PlayerbotAI.h"
 #include "PlayerbotDbStore.h"
 
-#define MANGOSBOT_VERSION 2
+#define MANGOSBOT_VERSION 0
 
 std::vector<std::string> split(std::string const& s, char delim);
 void split(std::vector<std::string>& dest, std::string const& str, char const* delim);

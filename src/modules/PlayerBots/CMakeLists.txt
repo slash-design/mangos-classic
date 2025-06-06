@@ -119,7 +119,7 @@ if (BUILD_PLAYERBOTS)
 endif()
 
 # Define Core
-if ( ${CMAKE_PROJECT_NAME} MATCHES "CMaNGOS")
+if ( ${CMAKE_PROJECT_NAME} MATCHES "DestinyCore")
   add_definitions(-DCMANGOS)
 else()
   if ( ${CMAKE_PROJECT_NAME} MATCHES "MaNGOS")
@@ -127,14 +127,12 @@ else()
   endif()
 endif()
 
-# Define Expansion
-if ( ${CMAKE_PROJECT_NAME} MATCHES "Classic")
+# Define Expansion based on selected build
+if(BUILD STREQUAL "Vanilla")
   add_definitions(-DMANGOSBOT_ZERO)
-endif()
-if ( ${CMAKE_PROJECT_NAME} MATCHES "TBC")
+elseif(BUILD STREQUAL "TBC")
   add_definitions(-DMANGOSBOT_ONE)
-endif()
-if ( ${CMAKE_PROJECT_NAME} MATCHES "WoTLK")
+elseif(BUILD STREQUAL "WOTLK")
   add_definitions(-DMANGOSBOT_TWO)
 endif()
 
