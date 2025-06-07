@@ -18,15 +18,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#include <winver.h>
 
-#ifndef COMMON_DEFINES_H
-#define COMMON_DEFINES_H
+IDI_APPICON ICON DISCARDABLE "authserver.ico"
 
-enum LoginType
-{
-    LOGIN_TYPE_AUTHSERVER = 0,
-    LOGIN_TYPE_MANGOSD = 1,
-    LOGIN_TYPE_MAX,
-};
-
-#endif
+APP_MANIFEST RT_MANIFEST "manifest.xml"
