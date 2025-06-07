@@ -6,26 +6,26 @@ crashcount=0
 
 case $1 in
     start )
-        screen -dmS run-realmd $PWD/$0 detached
-        echo "MaNGOS realm started"
+        screen -dmS run-authserver $PWD/$0 detached
+        echo "AuthServer started"
     ;;
     detached )
         while :
         do
                 echo `date` >> crash.log
-                cmd="./realmd"
+                cmd="./authserver"
                 $cmd
                 status=$?
                 echo "Status after downtime is: $status"
-                mv Server.log Server$(date +%F-%H:%M).log && touch Realmd.log
+                mv Server.log Server$(date +%F-%H:%M).log && touch AuthServer.log
                 if [ "$status" == "2" ]; then
-                   echo `date` ", MaNGOS realm restarted."
+                   echo `date` ", AuthServer restarted."
                 elif [ "$status" == "0" ]; then
                    echo "date" ", MaNGOS realm shut down."
                    exit 0
                 else
                    mv crash.log $(date +%F-%H:%M).log && touch crash.log
-                   echo "date" ", realm daemon crashed."
+                   echo "date" ", AuthServer crashed."
                    ((crashcount=crashcount+1))
                    if [ "$crashcount" -gt 50 ]; then
                       exit 0

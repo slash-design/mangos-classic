@@ -1,19 +1,22 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef MANGOS_SYSTEMCONFIG_H
@@ -39,8 +42,8 @@
 #ifndef _MANGOSDCONFVERSION
 # define _MANGOSDCONFVERSION 2022012301
 #endif
-#ifndef _REALMDCONFVERSION
-# define _REALMDCONFVERSION 2021031501
+#ifndef _AUTHSERVERCONFVERSION
+# define _AUTHSERVERCONFVERSION 2021031501
 #endif
 
 #if MANGOS_ENDIAN == MANGOS_BIG_ENDIAN
@@ -75,7 +78,7 @@
 #  define _ENDIAN_PLATFORM "Win32 (" _ENDIAN_STRING ")"
 # endif
 # define _MANGOSD_CONFIG  SYSCONFDIR"mangosd.conf"
-# define _REALMD_CONFIG   SYSCONFDIR"realmd.conf"
+# define _AUTHSERVER_CONFIG   SYSCONFDIR"authserver.conf"
 # define _AUCTIONHOUSEBOT_CONFIG   SYSCONFDIR"ahbot.conf"
 #else
 # if defined  (__FreeBSD__)
@@ -94,7 +97,7 @@
 #  define _ENDIAN_PLATFORM "Unix_" ARCHITECTURE " (" _ENDIAN_STRING ")"
 # endif
 # define _MANGOSD_CONFIG  SYSCONFDIR"mangosd.conf"
-# define _REALMD_CONFIG  SYSCONFDIR"realmd.conf"
+# define _AUTHSERVER_CONFIG  SYSCONFDIR"authserver.conf"
 # define _AUCTIONHOUSEBOT_CONFIG   SYSCONFDIR"ahbot.conf"
 #endif
 

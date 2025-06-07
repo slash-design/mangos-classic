@@ -1,24 +1,23 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/** \file
-    \ingroup realmd
-*/
 
 #include "Common.h"
 #include "Auth/HMACSHA1.h"
@@ -31,7 +30,6 @@
 #include "AuthCodes.h"
 #include "Auth/SRP6.h"
 #include "Util/CommonDefines.h"
-
 #include <openssl/md5.h>
 #include <ctime>
 #include <memory>
@@ -674,7 +672,7 @@ bool AuthSocket::_HandleLogonProof()
                         {
                             uint32 acc_id = fields[0].GetUInt32();
                             LoginDatabase.PExecute("INSERT INTO account_banned(account_id, banned_at, expires_at, banned_by, reason, active)"
-                                "VALUES ('%u'," _UNIXTIME_ "," _UNIXTIME_ "+'%u','MaNGOS realmd','Failed login autoban',1)",
+                                "VALUES ('%u'," _UNIXTIME_ "," _UNIXTIME_ "+'%u','AuthServer','Failed login autoban',1)",
                                 acc_id, WrongPassBanTime);
                             BASIC_LOG("[AuthChallenge] account %s got banned for '%u' seconds because it failed to authenticate '%u' times",
                                 self->_login.c_str(), WrongPassBanTime, failed_logins);
@@ -683,7 +681,7 @@ bool AuthSocket::_HandleLogonProof()
                         {
                             std::string current_ip = self->GetRemoteAddress();
                             LoginDatabase.escape_string(current_ip);
-                            LoginDatabase.PExecute("INSERT INTO ip_banned VALUES ('%s'," _UNIXTIME_ "," _UNIXTIME_ "+'%u','MaNGOS realmd','Failed login autoban')",
+                            LoginDatabase.PExecute("INSERT INTO ip_banned VALUES ('%s'," _UNIXTIME_ "," _UNIXTIME_ "+'%u','AuthServer','Failed login autoban')",
                                 current_ip.c_str(), WrongPassBanTime);
                             BASIC_LOG("[AuthChallenge] IP %s got banned for '%u' seconds because account %s failed to authenticate '%u' times",
                                 current_ip.c_str(), WrongPassBanTime, self->_login.c_str(), failed_logins);
@@ -1154,7 +1152,7 @@ void AuthSocket::verifyVersionAndFinalizeAuthentication(std::shared_ptr<sAuthLog
     LoginDatabase.DirectPExecute("UPDATE account SET sessionkey = '%s', locale = '%s', failed_logins = 0, os = '%s', platform = '%s' WHERE username = '%s'", K_hex, _safelocale.c_str(), m_os.c_str(), m_platform.c_str(), _safelogin.c_str());
     std::unique_ptr<QueryResult> loginfail(LoginDatabase.PQuery("SELECT id FROM account WHERE username = '%s'", _safelogin.c_str()));
     if (loginfail)
-        LoginDatabase.PExecute("INSERT INTO account_logons(accountId,ip,loginTime,loginSource) VALUES('%u','%s'," _NOW_ ",'%u')", loginfail->Fetch()[0].GetUInt32(), GetRemoteAddress().c_str(), LOGIN_TYPE_REALMD);
+        LoginDatabase.PExecute("INSERT INTO account_logons(accountId,ip,loginTime,loginSource) VALUES('%u','%s'," _NOW_ ",'%u')", loginfail->Fetch()[0].GetUInt32(), GetRemoteAddress().c_str(), LOGIN_TYPE_AUTHSERVER);
     OPENSSL_free((void*)K_hex);
 
     ///- Finish SRP6 and send the final result to the client

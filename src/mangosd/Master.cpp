@@ -1,24 +1,23 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/** \file
-    \ingroup mangosd
-*/
 
 #include "Common.h"
 #include "Master.h"
@@ -35,15 +34,12 @@
 #include "MaNGOSsoap.h"
 #include "Mails/MassMailMgr.h"
 #include "Server/DBCStores.h"
-
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "Policies/Singleton.h"
 #include "Network/AsyncListener.hpp"
 #include "Network/AsyncSocket.hpp"
-
 #include <boost/thread.hpp>
-
 #include <memory>
 
 #ifdef _WIN32
@@ -420,7 +416,7 @@ bool Master::_StartDB()
         return false;
     }
 
-    if (!LoginDatabase.CheckRequiredField("realmd_db_version", REVISION_DB_REALMD))
+    if (!LoginDatabase.CheckRequiredField("realmd_db_version", REVISION_DB_AUTHSERVER))
     {
         ///- Wait for already started DB delay threads to end
         WorldDatabase.HaltDelayThread();

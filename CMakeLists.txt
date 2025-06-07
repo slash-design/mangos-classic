@@ -42,7 +42,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Define here name of the binaries
 set(CMANGOS_BINARY_SERVER_NAME "mangosd")
-set(CMANGOS_BINARY_REALMD_NAME "realmd")
+set(BINARY_AUTH_SERVER_NAME "authserver")
 
 # Function to remove duplicate entries in provided string
 function(RemoveDuplicateSubstring stringIn stringOut)
@@ -239,7 +239,7 @@ find_package(Boost ${BOOST_MIN_VERSION} REQUIRED
 # message(STATUS "Boost libs: ${Boost_LIBRARY_DIRS}")
 
 # Win32 delivered packages
-if(WIN32 AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS))
+if(WIN32 AND (BUILD_GAME_SERVER OR BUILD_AUTH_SERVER OR BUILD_EXTRACTORS))
   set(MYSQL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/dep/lib/include/mysql")
   set(MYSQL_LIBRARY "${CMAKE_SOURCE_DIR}/dep/lib/${DEP_ARCH}_release/libmysql.lib")
   set(MYSQL_DEBUG_LIBRARY "${CMAKE_SOURCE_DIR}/dep/lib/${DEP_ARCH}_debug/libmysql.lib")
@@ -257,7 +257,7 @@ if(WIN32 AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS))
 endif()
 
 # *nix-specific packages
-if(UNIX AND (BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS))
+if(UNIX AND (BUILD_GAME_SERVER OR BUILD_AUTH_SERVER OR BUILD_EXTRACTORS))
   if(POSTGRESQL)
     find_package(PostgreSQL REQUIRED)
   elseif(SQLITE)
@@ -362,7 +362,7 @@ endif()
 # print out the results before continuing
 include(cmake/showoptions.cmake)
 
-if(NOT BUILD_GAME_SERVER AND NOT BUILD_LOGIN_SERVER AND NOT BUILD_EXTRACTORS AND NOT BUILD_DOCS AND NOT BUILD_RECASTDEMOMOD)
+if(NOT BUILD_GAME_SERVER AND NOT BUILD_AUTH_SERVER AND NOT BUILD_EXTRACTORS AND NOT BUILD_DOCS AND NOT BUILD_RECASTDEMOMOD)
   message(FATAL_ERROR "You must select something to build!")
 endif()
 
@@ -402,7 +402,7 @@ if(UNIX)
   add_compile_definitions(SYSCONFDIR="../${CONF_FOLDER_NAME}/")
 endif()
 
-if(BUILD_GAME_SERVER OR BUILD_LOGIN_SERVER OR BUILD_EXTRACTORS)
+if(BUILD_GAME_SERVER OR BUILD_AUTH_SERVER OR BUILD_EXTRACTORS)
   add_subdirectory(src)
 endif()
 
@@ -441,8 +441,8 @@ endif()
 if(MSVC)
   if(BUILD_GAME_SERVER)
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${CMANGOS_BINARY_SERVER_NAME})
-  elseif(BUILD_LOGIN_SERVER)
-    set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${CMANGOS_BINARY_REALMD_NAME})
+  elseif(BUILD_AUTH_SERVER)
+    set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${BINARY_AUTH_SERVER_NAME})
   elseif(BUILD_RECASTDEMOMOD)
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "RecastDemoMod")
   endif()
@@ -461,7 +461,7 @@ endif()
 # List all known target names that need the definitions
 set(CMANGOS_ALL_TARGETS
     shared
-    realmd
+    authserver
     mangosd
 )
 

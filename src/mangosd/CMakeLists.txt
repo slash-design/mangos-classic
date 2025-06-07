@@ -6,15 +6,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
 set(EXECUTABLE_NAME ${CMANGOS_BINARY_SERVER_NAME})
 
@@ -34,30 +25,29 @@ set(EXECUTABLE_SRCS
     soapH.h
     soapServer.cpp
     soapStub.h
-   )
+)
 
+# Windows-only: add .rc resource
 if(WIN32)
-  # add resource file to windows build
-  set(EXECUTABLE_SRCS ${EXECUTABLE_SRCS} mangosd.rc)
-  if(MSVC)
-    set(EXECUTABLE_SRCS
-      ${EXECUTABLE_SRCS}
-      ${CMAKE_SOURCE_DIR}/src/shared/Platform/WheatyExceptionReport.cpp
-      ${CMAKE_SOURCE_DIR}/src/shared/Platform/WheatyExceptionReport.h
-     )
-  endif()
+  list(APPEND EXECUTABLE_SRCS mangosd.rc)
 endif()
 
+# Visual Studio source grouping
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${EXECUTABLE_SRCS})
+
+# Define the executable
 add_executable(${EXECUTABLE_NAME}
   ${EXECUTABLE_SRCS}
 )
 
+# Link to required libraries
 target_link_libraries(${EXECUTABLE_NAME}
   shared
   game
   gsoap
 )
 
+# Windows-specific configuration
 if(WIN32)
   if(MSVC)
     target_link_libraries(${EXECUTABLE_NAME}
@@ -71,40 +61,46 @@ if(WIN32)
     )
   endif()
 
-  # Define OutDir to source/bin/(platform)_(configuaration) folder.
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${DEV_BIN_DIR}")
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${DEV_BIN_DIR}")
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES PROJECT_LABEL "WorldServer")
-
-  # Add conf file to dev folder
-  add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in\" \"$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/mangosd.conf.dist\")
+  set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${DEV_BIN_DIR}"
+    VS_DEBUGGER_WORKING_DIRECTORY "${DEV_BIN_DIR}"
+    PROJECT_LABEL "WorldServer"
+  )
 
   add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_SOURCE_DIR}/src/game/Anticheat/module/anticheat.conf.dist.in\" \"$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/anticheat.conf.dist\")
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/mangosd.conf.dist"
+  )
 
   add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/game/Anticheat/module/warden_modules/ $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/warden_modules
-    DEPENDS ${EXECUTABLE_NAME})
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/src/game/Anticheat/module/anticheat.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/anticheat.conf.dist"
+  )
+
+  add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/src/game/Anticheat/module/warden_modules/" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/warden_modules"
+    DEPENDS ${EXECUTABLE_NAME}
+  )
 
   if(BUILD_DEPRECATED_PLAYERBOT)
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-	  COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_SOURCE_DIR}/src/game/PlayerBot/playerbot.conf.dist.in\" \"$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/playerbot.conf.dist\")
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/src/game/PlayerBot/playerbot.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/playerbot.conf.dist"
+    )
   endif()
 
   if(BUILD_PLAYERBOTS)
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-	  COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_SOURCE_DIR}/src/modules/PlayerBots/playerbot/aiplayerbot.conf.dist.in\" \"$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/aiplayerbot.conf.dist\")
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/src/modules/PlayerBots/playerbot/aiplayerbot.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/aiplayerbot.conf.dist"
+    )
   endif()
 
   if(BUILD_AHBOT)
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-	  COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_SOURCE_DIR}/src/game/AuctionHouseBot/ahbot.conf.dist.in\" \"$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/ahbot.conf.dist\")
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/src/game/AuctionHouseBot/ahbot.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/ahbot.conf.dist"
+    )
   endif()
 endif()
 
+# Linker flags
 set(EXECUTABLE_LINK_FLAGS "")
-
 if(UNIX)
   if (APPLE)
     set(EXECUTABLE_LINK_FLAGS "-pthread -framework Carbon")
@@ -113,31 +109,30 @@ if(UNIX)
   endif()
 endif()
 
-set_target_properties(${EXECUTABLE_NAME} PROPERTIES LINK_FLAGS
-  "${EXECUTABLE_LINK_FLAGS}"
-)
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "${EXECUTABLE_LINK_FLAGS}")
 
-if (NOT WIN32)
+# Install rules
+if(NOT WIN32)
   install(FILES run-mangosd DESTINATION ${BIN_DIR})
 endif()
+
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION ${BIN_DIR})
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist DESTINATION ${CONF_DIR})
 
-# Define BUILD_DEPRECATED_PLAYERBOT if need
-if (BUILD_DEPRECATED_PLAYERBOT)
+if(BUILD_DEPRECATED_PLAYERBOT)
   add_definitions(-DBUILD_DEPRECATED_PLAYERBOT)
   configure_file(${CMAKE_SOURCE_DIR}/src/game/PlayerBot/playerbot.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/playerbot.conf.dist)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/playerbot.conf.dist DESTINATION ${CONF_DIR})
 endif()
 
-if (BUILD_AHBOT)
+if(BUILD_AHBOT)
   configure_file(${CMAKE_SOURCE_DIR}/src/game/AuctionHouseBot/ahbot.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/ahbot.conf.dist)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ahbot.conf.dist DESTINATION ${CONF_DIR})
 endif()
 
-# Define ENABLE_PLAYERBOTS if need
-if (BUILD_PLAYERBOTS)
+if(BUILD_PLAYERBOTS)
   add_definitions(-DENABLE_PLAYERBOTS)
 endif()
 

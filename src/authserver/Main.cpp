@@ -1,29 +1,27 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/// \addtogroup realmd Realm Daemon
-/// @{
-/// \file
 
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
 #include "RealmList.h"
-
 #include "Config/Config.h"
 #include "Log/Log.h"
 #include "AuthSocket.h"
@@ -32,17 +30,14 @@
 #include "revision_sql.h"
 #include "Util/Util.h"
 #include "Network/AsyncListener.hpp"
-
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 #include <openssl/provider.h>
 #include <openssl/err.h>
-
 #include <boost/program_options.hpp>
 #include <boost/version.hpp>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
-
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -50,9 +45,9 @@
 
 #ifdef _WIN32
 #include "Platform/ServiceWin32.h"
-char serviceName[] = "realmd";
-char serviceLongName[] = "MaNGOS realmd service";
-char serviceDescription[] = "Massive Network Game Object Server";
+char serviceName[] = "authserver";
+char serviceLongName[] = "DestinyCore auth service";
+char serviceDescription[] = "DestinyCore Multi-Version Authentication Server";
 /*
  * -1 - not in service mode
  *  0 - stopped
@@ -82,7 +77,7 @@ int main(int argc, char* argv[])
 
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
-    ("config,c", boost::program_options::value<std::string>(&configFile)->default_value(_REALMD_CONFIG), "configuration file")
+    ("config,c", boost::program_options::value<std::string>(&configFile)->default_value(_AUTHSERVER_CONFIG), "configuration file")
     ("version,v", "print version and exit")
 #ifdef _WIN32
     ("s", boost::program_options::value<std::string>(&serviceParameter), "<run, install, uninstall> service");
@@ -125,7 +120,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-    if (!sConfig.SetSource(configFile, "Realmd_"))
+    if (!sConfig.SetSource(configFile, "AuthServer_"))
     {
         sLog.outError("Could not find configuration file %s.", configFile.c_str());
         Log::WaitBeforeContinueIfNeed();
@@ -167,10 +162,10 @@ int main(int argc, char* argv[])
 
     // Check the version of the configuration file
     uint32 confVersion = sConfig.GetIntDefault("ConfVersion", 0);
-    if (confVersion < _REALMDCONFVERSION)
+    if (confVersion < _AUTHSERVERCONFVERSION)
     {
         sLog.outError("*****************************************************************************");
-        sLog.outError(" WARNING: Your realmd.conf version indicates your conf file is out of date!");
+        sLog.outError(" WARNING: Your authserver.conf version indicates your conf file is out of date!");
         sLog.outError("          Please check for updates, as your current default values may cause");
         sLog.outError("          strange behavior.");
         sLog.outError("*****************************************************************************");
@@ -200,7 +195,7 @@ int main(int argc, char* argv[])
     sLog.outString();
     sLog.outString("<Ctrl-C> to stop.");
 
-    // realmd PID file creation
+    // authserver PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile");
     if (!pidfile.empty())
     {
@@ -268,7 +263,7 @@ int main(int argc, char* argv[])
 
                 if (!curAff)
                 {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for realmd. Accessible processors bitmask (hex): %x", Aff, appAff);
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for AuthServer. Accessible processors bitmask (hex): %x", Aff, appAff);
                 }
                 else
                 {
@@ -286,9 +281,9 @@ int main(int argc, char* argv[])
         if (Prio)
         {
             if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
-                sLog.outString("realmd process priority class set to HIGH");
+                sLog.outString("AuthServer process priority class set to HIGH");
             else
-                sLog.outError("Can't set realmd process priority class.");
+                sLog.outError("Can't set AuthServer process priority class.");
             sLog.outString();
         }
     }
@@ -374,7 +369,7 @@ bool StartDB()
         return false;
     }
 
-    if (!LoginDatabase.CheckRequiredField("realmd_db_version", REVISION_DB_REALMD))
+    if (!LoginDatabase.CheckRequiredField("realmd_db_version", REVISION_DB_AUTHSERVER))
     {
         // Wait for already started DB delay threads to end
         LoginDatabase.HaltDelayThread();
