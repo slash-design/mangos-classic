@@ -1,23 +1,26 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PLAYER_H
-#define _PLAYER_H
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include "Common.h"
 #include "Entities/ItemPrototype.h"
@@ -749,6 +752,16 @@ enum PlayerRestState
     REST_STATE_RAF_LINKED       = 0x04                      // Exact use unknown
 };
 
+enum PlayerCommandStates
+{
+    CHEAT_NONE      = 0x00,
+    CHEAT_GOD       = 0x01,
+    CHEAT_CASTTIME  = 0x02,
+    CHEAT_COOLDOWN  = 0x04,
+    CHEAT_POWER     = 0x08,
+    CHEAT_WATERWALK = 0x10
+};
+
 class PlayerTaxi
 {
     public:
@@ -978,6 +991,11 @@ class Player : public Unit
         void GiveLevel(uint32 level);
 
         void InitStatsForLevel(bool reapplyMods = false);
+
+        // .cheat command related
+        bool GetCommandStatus(uint32 command) const { return _activeCheats & command; }
+        void SetCommandStatusOn(uint32 command) { _activeCheats |= command; }
+        void SetCommandStatusOff(uint32 command) { _activeCheats &= ~command; }
 
         // Played Time Stuff
         time_t m_logintime;
@@ -2540,6 +2558,8 @@ class Player : public Unit
         uint32 m_BGPetSpell;
 
         ReputationMgr  m_reputationMgr;
+
+        uint32 _activeCheats;
 
         int32 m_cannotBeDetectedTimer;
 
