@@ -1,24 +1,23 @@
 /*
- * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+ * This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+ * and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+ * for detailed attribution.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/// \addtogroup mangosd Mangos Daemon
-/// @{
-/// \file
 
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
@@ -29,24 +28,21 @@
 #include "SystemConfig.h"
 #include "AuctionHouseBot/AuctionHouseBot.h"
 #include "PlayerBot/config.h"
-
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 #include <openssl/provider.h>
 #include <openssl/err.h>
-
 #include <boost/program_options.hpp>
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
-
 #include <iostream>
 #include <string>
 
 #ifdef _WIN32
 #include "Platform/ServiceWin32.h"
-char serviceName[] = "mangosd";
-char serviceLongName[] = "MaNGOS world service";
-char serviceDescription[] = "Massive Network Game Object Server";
+char serviceName[] = "worldserver";
+char serviceLongName[] = "DestinyCore world service";
+char serviceDescription[] = "DestinyCore Multi-Version World Server";
 /*
  * -1 - not in service mode
  *  0 - stopped
@@ -73,7 +69,7 @@ int main(int argc, char* argv[])
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
     ("ahbot,a", boost::program_options::value<std::string>(&auctionBotConfig), "ahbot configuration file")
-    ("config,c", boost::program_options::value<std::string>(&configFile)->default_value(_MANGOSD_CONFIG), "configuration file")
+    ("config,c", boost::program_options::value<std::string>(&configFile)->default_value(_WORLDSERVER_CONFIG), "configuration file")
 #ifdef BUILD_DEPRECATED_PLAYERBOT
     ("playerbot,p", boost::program_options::value<std::string>(&playerBotConfig)->default_value(_D_PLAYERBOT_CONFIG), "playerbot configuration file")
 #endif
@@ -141,7 +137,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-    if (!sConfig.SetSource(configFile, "Mangosd_"))
+    if (!sConfig.SetSource(configFile, "WorldServer_"))
     {
         sLog.outError("Could not find configuration file %s.", configFile.c_str());
         Log::WaitBeforeContinueIfNeed();
@@ -214,7 +210,7 @@ int main(int argc, char* argv[])
     // at sMaster return function exist with codes
     // 0 - normal shutdown
     // 1 - shutdown at error
-    // 2 - restart command used, this code can be used by restarter for restart mangosd
+    // 2 - restart command used, this code can be used by restarter for restart worldserver
 }
 
 /// @}

@@ -138,7 +138,7 @@ int Master::Run()
     MaNGOS::Thread world_thread(new WorldRunnable);
     world_thread.setPriority(MaNGOS::Priority_Highest);
 
-    // set realmbuilds depend on mangosd expected builds, and set server online
+    // set realmbuilds depend on worldserver expected builds, and set server online
     {
         std::string builds = AcceptableClientBuildsListStr();
         LoginDatabase.escape_string(builds);
@@ -177,7 +177,7 @@ int Master::Run()
 
                 if (!curAff)
                 {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for mangosd. Accessible processors bitmask (hex): %x", Aff, appAff);
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for worldserver. Accessible processors bitmask (hex): %x", Aff, appAff);
                 }
                 else
                 {
@@ -196,9 +196,9 @@ int Master::Run()
         if (Prio)
         {
             if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
-                sLog.outString("mangosd process priority class set to HIGH");
+                sLog.outString("worldserver process priority class set to HIGH");
             else
-                sLog.outError("Can't set mangosd process priority class.");
+                sLog.outError("Can't set worldserver process priority class.");
             sLog.outString();
         }
     }
@@ -218,7 +218,7 @@ int Master::Run()
         int32 networkThreadCount = sConfig.GetIntDefault("Network.Threads", 1);
         if (networkThreadCount <= 0)
         {
-            sLog.outError("Invalid network thread workers setting in mangosd.conf. (%d) should be > 0", networkThreadCount);
+            sLog.outError("Invalid network thread workers setting in worldserver.conf. (%d) should be > 0", networkThreadCount);
             networkThreadCount = 1;
         }
         std::string bindIp = sConfig.GetStringDefault("BindIP", "0.0.0.0");

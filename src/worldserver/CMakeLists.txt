@@ -29,7 +29,7 @@ set(EXECUTABLE_SRCS
 
 # Windows-only: add .rc resource
 if(WIN32)
-  list(APPEND EXECUTABLE_SRCS mangosd.rc)
+  list(APPEND EXECUTABLE_SRCS worldserver.rc)
 endif()
 
 # Visual Studio source grouping
@@ -61,14 +61,16 @@ if(WIN32)
     )
   endif()
 
+  get_filename_component(_project_folder_name "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+
   set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${DEV_BIN_DIR}"
-    VS_DEBUGGER_WORKING_DIRECTORY "${DEV_BIN_DIR}"
-    PROJECT_LABEL "WorldServer"
+   RUNTIME_OUTPUT_DIRECTORY "${DEV_BIN_DIR}"
+   VS_DEBUGGER_WORKING_DIRECTORY "${DEV_BIN_DIR}"
+   PROJECT_LABEL "${_project_folder_name}"
   )
 
   add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/mangosd.conf.dist"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/worldserver.conf.dist.in" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/worldserver.conf.dist"
   )
 
   add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
@@ -113,13 +115,13 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "${EXECUTABLE_LIN
 
 # Install rules
 if(NOT WIN32)
-  install(FILES run-mangosd DESTINATION ${BIN_DIR})
+  install(FILES run-worldserver DESTINATION ${BIN_DIR})
 endif()
 
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION ${BIN_DIR})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist DESTINATION ${CONF_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/worldserver.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/worldserver.conf.dist)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/worldserver.conf.dist DESTINATION ${CONF_DIR})
 
 if(BUILD_DEPRECATED_PLAYERBOT)
   add_definitions(-DBUILD_DEPRECATED_PLAYERBOT)

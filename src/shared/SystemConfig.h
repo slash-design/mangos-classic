@@ -39,8 +39,8 @@
 
 // Format is YYYYMMDDRR where RR is the change in the conf file
 // for that day.
-#ifndef _MANGOSDCONFVERSION
-# define _MANGOSDCONFVERSION 2022012301
+#ifndef _WORLDSERVERCONFVERSION
+# define _WORLDSERVERCONFVERSION 2022012301
 #endif
 #ifndef _AUTHSERVERCONFVERSION
 # define _AUTHSERVERCONFVERSION 2021031501
@@ -77,7 +77,7 @@
 # else
 #  define _ENDIAN_PLATFORM "Win32 (" _ENDIAN_STRING ")"
 # endif
-# define _MANGOSD_CONFIG  SYSCONFDIR"mangosd.conf"
+# define _WORLDSERVER_CONFIG  SYSCONFDIR"worldserver.conf"
 # define _AUTHSERVER_CONFIG   SYSCONFDIR"authserver.conf"
 # define _AUCTIONHOUSEBOT_CONFIG   SYSCONFDIR"ahbot.conf"
 #else
@@ -96,7 +96,7 @@
 # else
 #  define _ENDIAN_PLATFORM "Unix_" ARCHITECTURE " (" _ENDIAN_STRING ")"
 # endif
-# define _MANGOSD_CONFIG  SYSCONFDIR"mangosd.conf"
+# define _WORLDSERVER_CONFIG  SYSCONFDIR"worldserver.conf"
 # define _AUTHSERVER_CONFIG  SYSCONFDIR"authserver.conf"
 # define _AUCTIONHOUSEBOT_CONFIG   SYSCONFDIR"ahbot.conf"
 #endif

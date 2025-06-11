@@ -41,7 +41,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Define here name of the binaries
-set(CMANGOS_BINARY_SERVER_NAME "mangosd")
+set(CMANGOS_BINARY_SERVER_NAME "worldserver")
 set(BINARY_AUTH_SERVER_NAME "authserver")
 
 # Function to remove duplicate entries in provided string
@@ -462,7 +462,7 @@ endif()
 set(CMANGOS_ALL_TARGETS
     shared
     authserver
-    mangosd
+    worldserver
 )
 
 foreach(target IN LISTS CMANGOS_ALL_TARGETS)
