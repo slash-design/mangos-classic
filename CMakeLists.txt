@@ -318,8 +318,8 @@ else()
 endif()
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/src/shared/revision.h.in
-  ${CMAKE_BINARY_DIR}/src/shared/revision.h
+  ${CMAKE_SOURCE_DIR}/revision.h.in
+  ${CMAKE_BINARY_DIR}/revision.h
   @ONLY
 )
 

@@ -1,20 +1,22 @@
 #
-# This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
+# This file is part of the DestinyCore Project. See AUTHORS file for copyright information.
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# This file contains code derived from the CMaNGOS Project (https://github.com/cmangos)
+# and retains portions originally authored by the CMaNGOS Developers. See the AUTHORS file
+# for detailed attribution.
 #
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 set(LIBRARY_NAME shared)
 
@@ -156,8 +158,8 @@ set(LIBRARY_SRCS
     ${SRC_GRP_UTIL}
     Common.cpp
     Common.h
-    revision_sql.h
-    revision.h
+    ${CMAKE_SOURCE_DIR}/revision_sql.h
+    ${CMAKE_BINARY_DIR}/revision.h
     SystemConfig.h
 )
 
@@ -230,7 +232,8 @@ target_include_directories(${LIBRARY_NAME}
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
   PUBLIC ${Boost_INCLUDE_DIRS}
   PUBLIC ${OPENSSL_INCLUDE_DIR}
-  PUBLIC ${CMAKE_BINARY_DIR}/src/shared # For the generated revision.h.
+  PUBLIC ${CMAKE_BINARY_DIR}                 # For the generated revision.h.
+  PUBLIC ${CMAKE_SOURCE_DIR}                 # For revision_sql.h
   PUBLIC "${CMAKE_SOURCE_DIR}/src/game"
 )
 
@@ -241,6 +244,7 @@ if(UNIX)
     PUBLIC dl
     PUBLIC ${Boost_LIBRARIES}
     PUBLIC ${OPENSSL_LIBRARIES}
+	PUBLIC genrev
   )
 else()
   target_link_libraries(${LIBRARY_NAME}
@@ -248,6 +252,7 @@ else()
     PUBLIC ${Boost_LIBRARIES}
     PUBLIC ${OPENSSL_LIBRARIES}
     PUBLIC utf8cpp
+	PUBLIC genrev
   )
 endif()
 
@@ -284,7 +289,7 @@ if(PCH)
 endif()
 
 # Mark the revision header as being generated.
-set_source_files_properties(${CMAKE_BINARY_DIR}/src/shared/revision.h
+set_source_files_properties(${CMAKE_BINARY_DIR}/revision.h
   PROPERTIES GENERATED TRUE
              HEADER_FILE_ONLY TRUE)
 if(MSVC)

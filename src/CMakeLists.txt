@@ -18,9 +18,11 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
+add_subdirectory(genrev)
+add_subdirectory(shared)
+
 if(BUILD_GAME_SERVER OR BUILD_AUTH_SERVER OR BUILD_EXTRACTORS)
   add_subdirectory(framework)
-  add_subdirectory(shared)
 endif()
 
 # Playerbots module
